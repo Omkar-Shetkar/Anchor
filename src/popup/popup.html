@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anchor</title>
+  <link rel="stylesheet" href="../assets/styles/tokens.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    
+    <!-- Top Header -->
+    <header class="popup-header">
+      <div class="brand">
+        <svg class="anchor-logo" viewBox="0 0 128 128" width="22" height="22" aria-hidden="true">
+          <circle cx="64" cy="34" r="9" fill="none" stroke="currentColor" stroke-width="7" />
+          <circle cx="64" cy="34" r="3" fill="currentColor" />
+          <line x1="64" y1="43" x2="64" y2="92" stroke="currentColor" stroke-width="7" stroke-linecap="round" />
+          <line x1="46" y1="52" x2="82" y2="52" stroke="currentColor" stroke-width="7" stroke-linecap="round" />
+          <path d="M 36 78 C 36 98, 92 98, 92 78" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" />
+        </svg>
+        <span class="brand-title">Anchor</span>
+      </div>
+      <div id="header-status-badge" class="status-badge idle">
+        <span class="status-dot"></span>
+        <span id="header-status-text">Ready</span>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="popup-tabs" role="tablist">
+      <button type="button" class="tab-btn active" data-tab="tab-active" role="tab" aria-selected="true">
+        <span>Session</span>
+      </button>
+      <button type="button" class="tab-btn" data-tab="tab-sites" role="tab" aria-selected="false">
+        <span>Sites & Coach</span>
+      </button>
+      <button type="button" class="tab-btn" data-tab="tab-story" role="tab" aria-selected="false">
+        <span>Weekly Story</span>
+      </button>
+    </nav>
+
+    <!-- Tab 1: Active Session -->
+    <section id="tab-active" class="tab-pane active" role="tabpanel">
+      <!-- Active session state -->
+      <div id="active-session-card" class="session-card" style="display: none;">
+        <div class="session-header">
+          <span class="pulse-indicator"></span>
+          <span id="session-domain" class="session-domain">youtube.com</span>
+        </div>
+        <div class="session-metric">
+          <span class="metric-label">Active Conscious Time</span>
+          <span id="session-dwell-time" class="metric-value">00:00</span>
+        </div>
+        <div class="session-intention-chip">
+          <span class="chip-label">Intention:</span>
+          <span id="session-intention-text" class="chip-value">Quick Check</span>
+        </div>
+        <div class="session-actions">
+          <button type="button" id="btn-end-session" class="btn btn-sm btn-outline">End Session & Reflect</button>
+        </div>
+      </div>
+
+      <!-- No active session state -->
+      <div id="no-session-card" class="empty-state">
+        <div class="empty-icon">⚓</div>
+        <h3>No Mindful Site Active</h3>
+        <p>You are browsing freely. When you navigate to a mindful site, Anchor will drop anchor to pause automatic habits.</p>
+      </div>
+
+      <!-- Quick Micro-Reflection (if recent unrated session exists) -->
+      <div id="quick-reflect-box" class="quick-reflect-box" style="display: none;">
+        <h4>How did your last session feel?</h4>
+        <div class="reflect-pills">
+          <button type="button" class="reflect-pill nourishing" data-rating="nourishing">🌿 Nourishing</button>
+          <button type="button" class="reflect-pill neutral" data-rating="neutral">⚖️ Neutral</button>
+          <button type="button" class="reflect-pill draining" data-rating="draining">🌧️ Draining</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 2: Sites & Coach Settings -->
+    <section id="tab-sites" class="tab-pane" role="tabpanel">
+      <!-- Add Domain Input -->
+      <form id="form-add-domain" class="add-domain-form">
+        <input type="text" id="input-new-domain" placeholder="Add mindful site (e.g., twitter.com)..." required />
+        <button type="submit" class="btn btn-primary btn-sm">Add</button>
+      </form>
+
+      <!-- Domain List -->
+      <div class="section-title">
+        <span>Monitored Mindful Sites</span>
+        <span id="domains-count-badge" class="count-badge">4</span>
+      </div>
+      <ul id="domains-list" class="domains-list">
+        <!-- Rendered dynamically -->
+      </ul>
+
+      <!-- Timing Preferences -->
+      <div class="section-title">
+        <span>Coach Timing</span>
+      </div>
+      <div class="settings-group">
+        <div class="setting-item">
+          <div class="setting-text">
+            <span class="setting-name">Breathing Pause</span>
+            <span class="setting-hint">Duration of initial breathing reset</span>
+          </div>
+          <div class="setting-control">
+            <input type="range" id="slider-pause-duration" min="3" max="5" step="1" value="3" />
+            <span id="val-pause-duration" class="control-value">3s</span>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-text">
+            <span class="setting-name">Quick Check Cap</span>
+            <span class="setting-hint">Threshold before gentle realignment nudge</span>
+          </div>
+          <div class="setting-control">
+            <input type="range" id="slider-quick-check" min="3" max="15" step="1" value="7" />
+            <span id="val-quick-check" class="control-value">7m</span>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-text">
+            <span class="setting-name">Exit Notifications</span>
+            <span class="setting-hint">Prompt 5-second micro-reflection on exit</span>
+          </div>
+          <div class="setting-control">
+            <label class="switch">
+              <input type="checkbox" id="toggle-notifications" checked />
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 3: Weekly Reflection Story -->
+    <section id="tab-story" class="tab-pane" role="tabpanel">
+      <div id="story-container" class="story-container">
+        <!-- Dynamically rendered weekly reflection card -->
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="popup-footer">
+      <span>🔒 100% Local & Private • Zero Telemetry</span>
+    </footer>
+
+  </div>
+
+  <script type="module" src="popup.ts"></script>
+</body>
+</html>

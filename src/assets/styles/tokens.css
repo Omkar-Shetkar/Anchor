@@ -1,0 +1,73 @@
+:root {
+  /* Color Palette - Calm Coastal & Mindful Stone */
+  --anchor-bg-primary: #0d1317;
+  --anchor-bg-secondary: #141c22;
+  --anchor-bg-card: rgba(22, 32, 40, 0.75);
+  --anchor-bg-glass: rgba(18, 27, 34, 0.65);
+  --anchor-border: rgba(255, 255, 255, 0.08);
+  --anchor-border-active: rgba(86, 182, 166, 0.35);
+
+  /* Text & Accents */
+  --anchor-text-primary: #edf2f4;
+  --anchor-text-secondary: #9db2bf;
+  --anchor-text-muted: #607274;
+
+  /* Mindful Brand Accents */
+  --anchor-teal-glow: #38bdf8;
+  --anchor-teal-primary: #0ea5e9;
+  --anchor-teal-deep: #0369a1;
+  --anchor-sage: #52b788;
+  --anchor-sage-glow: rgba(82, 183, 136, 0.25);
+
+  /* Sentiment Colors */
+  --anchor-nourishing: #10b981;
+  --anchor-nourishing-bg: rgba(16, 185, 129, 0.12);
+  --anchor-nourishing-border: rgba(16, 185, 129, 0.3);
+
+  --anchor-neutral: #94a3b8;
+  --anchor-neutral-bg: rgba(148, 163, 184, 0.12);
+  --anchor-neutral-border: rgba(148, 163, 184, 0.3);
+
+  --anchor-draining: #f97316;
+  --anchor-draining-bg: rgba(249, 115, 22, 0.12);
+  --anchor-draining-border: rgba(249, 115, 22, 0.3);
+
+  /* Typography */
+  --anchor-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --anchor-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Elevation & Blur */
+  --anchor-blur: blur(16px);
+  --anchor-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --anchor-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --anchor-shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.5);
+  --anchor-shadow-glow: 0 0 35px rgba(56, 189, 248, 0.2);
+
+  /* Radii */
+  --anchor-radius-sm: 6px;
+  --anchor-radius-md: 12px;
+  --anchor-radius-lg: 18px;
+  --anchor-radius-full: 9999px;
+
+  /* Timing */
+  --anchor-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --anchor-bg-primary: #f8fafc;
+    --anchor-bg-secondary: #f1f5f9;
+    --anchor-bg-card: rgba(255, 255, 255, 0.85);
+    --anchor-bg-glass: rgba(255, 255, 255, 0.7);
+    --anchor-border: rgba(0, 0, 0, 0.07);
+    --anchor-border-active: rgba(14, 165, 233, 0.4);
+
+    --anchor-text-primary: #0f172a;
+    --anchor-text-secondary: #475569;
+    --anchor-text-muted: #94a3b8;
+
+    --anchor-shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.05);
+    --anchor-shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
+    --anchor-shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.12);
+  }
+}

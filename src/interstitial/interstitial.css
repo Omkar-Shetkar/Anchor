@@ -1,0 +1,287 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--anchor-font-sans);
+  background-color: var(--anchor-bg-primary);
+  color: var(--anchor-text-primary);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-image: 
+    radial-gradient(circle at 50% 20%, rgba(14, 165, 233, 0.08) 0%, transparent 60%),
+    radial-gradient(circle at 80% 80%, rgba(82, 183, 136, 0.06) 0%, transparent 50%);
+}
+
+.interstitial-container {
+  width: 100%;
+  max-width: 600px;
+  padding: 24px;
+  animation: fadeIn 0.4s var(--anchor-ease);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.mindful-card {
+  background: var(--anchor-bg-card);
+  backdrop-filter: var(--anchor-blur);
+  -webkit-backdrop-filter: var(--anchor-blur);
+  border: 1px solid var(--anchor-border);
+  border-radius: var(--anchor-radius-lg);
+  box-shadow: var(--anchor-shadow-lg), var(--anchor-shadow-glow);
+  padding: 36px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* Header */
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--anchor-teal-glow);
+  background: rgba(56, 189, 248, 0.1);
+  padding: 6px 12px;
+  border-radius: var(--anchor-radius-full);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+}
+
+.destination-text {
+  font-size: 13px;
+  color: var(--anchor-text-muted);
+}
+
+.domain-highlight {
+  color: var(--anchor-text-secondary);
+  font-weight: 600;
+}
+
+/* Breathing Stage */
+.breathing-stage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.breathing-ring-outer {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.breathing-ring-pulse {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px dashed rgba(56, 189, 248, 0.3);
+  animation: rotateRing 15s linear infinite;
+}
+
+@keyframes rotateRing {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.breathing-circle-core {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.35) 0%, rgba(16, 185, 129, 0.2) 100%);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: breathePulse 3.5s ease-in-out infinite;
+}
+
+@keyframes breathePulse {
+  0%, 100% {
+    transform: scale(0.85);
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+  }
+  50% {
+    transform: scale(1.15);
+    box-shadow: 0 0 35px rgba(56, 189, 248, 0.5);
+  }
+}
+
+.breathing-cue {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: var(--anchor-text-primary);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  animation: cueFade 3.5s ease-in-out infinite;
+}
+
+@keyframes cueFade {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+/* Intention Section */
+.intention-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: center;
+}
+
+.prompt-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--anchor-text-primary);
+  letter-spacing: -0.01em;
+}
+
+.prompt-subtitle {
+  font-size: 14px;
+  color: var(--anchor-text-secondary);
+  margin-top: -8px;
+}
+
+/* Pills */
+.pills-container {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.intention-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--anchor-bg-secondary);
+  color: var(--anchor-text-secondary);
+  border: 1px solid var(--anchor-border);
+  padding: 10px 18px;
+  border-radius: var(--anchor-radius-full);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s var(--anchor-ease);
+}
+
+.intention-pill:hover {
+  background: rgba(56, 189, 248, 0.08);
+  color: var(--anchor-text-primary);
+  border-color: rgba(56, 189, 248, 0.3);
+  transform: translateY(-1px);
+}
+
+.intention-pill.selected {
+  background: rgba(14, 165, 233, 0.18);
+  color: var(--anchor-teal-glow);
+  border-color: var(--anchor-teal-glow);
+  box-shadow: 0 0 16px rgba(14, 165, 233, 0.3);
+}
+
+.pill-icon {
+  font-size: 15px;
+}
+
+/* Custom Input */
+.custom-input-wrapper {
+  margin-top: 6px;
+}
+
+.custom-intention-input {
+  width: 100%;
+  background: rgba(13, 19, 23, 0.6);
+  border: 1px solid var(--anchor-border);
+  border-radius: var(--anchor-radius-md);
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--anchor-text-primary);
+  transition: all 0.2s var(--anchor-ease);
+  outline: none;
+}
+
+.custom-intention-input:focus {
+  border-color: var(--anchor-teal-glow);
+  background: rgba(13, 19, 23, 0.9);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+}
+
+.custom-intention-input::placeholder {
+  color: var(--anchor-text-muted);
+}
+
+/* Actions Footer */
+.actions-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--anchor-border);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 11px 20px;
+  border-radius: var(--anchor-radius-md);
+  cursor: pointer;
+  transition: all 0.2s var(--anchor-ease);
+  border: none;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--anchor-text-muted);
+}
+
+.btn-secondary:hover {
+  color: var(--anchor-text-secondary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #0ea5e9 0%, #10b981 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35);
+}
+
+.btn-primary:hover:not(:disabled) {
+  opacity: 0.95;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(14, 165, 233, 0.45);
+}
+
+.btn-primary:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  box-shadow: none;
+}
