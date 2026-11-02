@@ -8,6 +8,7 @@
     "dev:chrome": "vite build --watch --mode chrome",
     "dev:firefox": "vite build --watch --mode firefox",
     "build": "vite build && node scripts/package-extension.js",
+    "package": "node scripts/package-extension.js",
     "build:chrome": "vite build --mode chrome",
     "build:firefox": "vite build --mode firefox",
     "test": "vitest run",

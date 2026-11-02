@@ -4,6 +4,7 @@ node_modules/
 # Production builds
 dist/
 build/
+release/
 
 # Testing & Coverage
 coverage/

@@ -60,3 +60,6 @@ auto_commit:
   after_taskstoissues:
     enabled: false
     message: "[Spec Kit] Sync tasks to issues"
+  after_release:
+    enabled: true
+    message: "[Spec Kit] Add Chrome and Firefox release documentation and packaging"

@@ -35,11 +35,14 @@ npm run dev:chrome
 npm run dev:firefox
 ```
 
-### 3. Production Build
+### 3. Production Build & Store Packaging
 
 ```bash
 # Compiles both Chrome (dist/chrome) and Firefox (dist/firefox) extensions
 npm run build
+
+# Package store-ready ZIPs & source archive with SHA-256 checksums
+npm run package
 ```
 
 ### 4. Running Tests & Typecheck
@@ -54,7 +57,17 @@ npm run typecheck
 
 ---
 
-## Loading the Extension in Browsers
+## Store Publishing & Release Documentation
+
+For complete, step-by-step instructions on submitting Anchor to the browser web stores:
+
+- 📖 **[Chrome & Firefox Store Release Guide](docs/RELEASE_GUIDE.md)**: Developer dashboard walkthroughs, MV3 compliance, permission justifications, and review policies.
+- 🎨 **[Store Listing Assets & Metadata](docs/STORE_LISTING.md)**: Ready-to-copy store descriptions, short summaries, tags, and screenshot specifications.
+- 🔒 **[Privacy Policy](docs/PRIVACY_POLICY.md)**: Official privacy statement covering 100% local storage, zero telemetry, and permission rationale.
+
+---
+
+## Loading the Extension in Browsers (Local Sideloading)
 
 ### Google Chrome
 1. Open Chrome and navigate to `chrome://extensions/`.
@@ -72,36 +85,44 @@ npm run typecheck
 ## Architecture & Project Structure
 
 ```text
-src/
-├── background/
-│   ├── index.ts                 # Service worker / background event coordinator
-│   ├── navigation-interceptor.ts# Mindful URL interception & pause redirection
-│   ├── session-coordinator.ts   # Session initialization, heartbeats & bounce logic
-│   ├── session-tracker.ts       # Active dwell time & idle listener
-│   └── notification-manager.ts  # 5-second exit micro-reflection notifications
-├── content/
-│   ├── index.ts                 # Content script entry point (document_start)
-│   ├── heartbeat.ts             # 5s active engagement pulse
-│   └── nudge-toast.ts           # Isolated Shadow DOM in-page follow-up nudge
-├── interstitial/
-│   ├── interstitial.html        # Clean distraction-free pause screen
-│   ├── interstitial.ts          # Breathing animation & intention selector
-│   └── interstitial.css         # Soothing aesthetic & breathing keyframes
-├── popup/
-│   ├── popup.html               # Extension toolbar popup & options
-│   ├── popup.ts                 # Controller for dashboard & weekly story
-│   ├── popup.css                # Premium calm styling & story cards
-│   ├── settings-controller.ts   # Domain management & timing sliders
-│   └── weekly-story-view.ts     # Weekly Reflection Story & soft cap action
-├── shared/
-│   ├── types.ts                 # Data models, intentions, sessions, settings
-│   ├── storage.ts               # Local storage service implementation
-│   ├── domain-matcher.ts        # URL normalization & mindful site matching
-│   ├── messages.ts              # Type-safe extension messaging protocol
-│   └── weekly-story.ts          # Aggregate ledger rollup & coaching heuristics
-└── assets/
-    ├── icons/                   # Extension icons (16, 32, 48, 128)
-    └── styles/                  # Shared design tokens & calm CSS theme
+Anchor/
+├── docs/
+│   ├── RELEASE_GUIDE.md         # Comprehensive Chrome & Firefox release walkthrough
+│   ├── STORE_LISTING.md         # Store copy, keywords, assets & reviewer notes
+│   └── PRIVACY_POLICY.md        # 100% client-side privacy policy & declarations
+├── scripts/
+│   └── package-extension.js     # Multi-target build & store ZIP packager
+├── src/
+│   ├── background/
+│   │   ├── index.ts             # Service worker / background event coordinator
+│   │   ├── navigation-interceptor.ts # Mindful URL interception & pause redirection
+│   │   ├── session-coordinator.ts # Session initialization, heartbeats & bounce logic
+│   │   ├── session-tracker.ts   # Active dwell time & idle listener
+│   │   └── notification-manager.ts # 5-second exit micro-reflection notifications
+│   ├── content/
+│   │   ├── index.ts             # Content script entry point (document_start)
+│   │   ├── heartbeat.ts         # 5s active engagement pulse
+│   │   └── nudge-toast.ts       # Isolated Shadow DOM in-page follow-up nudge
+│   ├── interstitial/
+│   │   ├── interstitial.html    # Clean distraction-free pause screen
+│   │   ├── interstitial.ts      # Breathing animation & intention selector
+│   │   └── interstitial.css     # Soothing aesthetic & breathing keyframes
+│   ├── popup/
+│   │   ├── popup.html           # Extension toolbar popup & options
+│   │   ├── popup.ts             # Controller for dashboard & weekly story
+│   │   ├── popup.css            # Premium calm styling & story cards
+│   │   ├── settings-controller.ts # Domain management & timing sliders
+│   │   └── weekly-story-view.ts # Weekly Reflection Story & soft cap action
+│   ├── shared/
+│   │   ├── types.ts             # Data models, intentions, sessions, settings
+│   │   ├── storage.ts           # Local storage service implementation
+│   │   ├── domain-matcher.ts    # URL normalization & mindful site matching
+│   │   ├── messages.ts          # Type-safe extension messaging protocol
+│   │   └── weekly-story.ts      # Aggregate ledger rollup & coaching heuristics
+│   └── assets/
+│       ├── icons/               # Extension icons (16, 32, 48, 128)
+│       └── styles/              # Shared design tokens & calm CSS theme
+└── tests/                       # Unit & contract test suites (Vitest)
 ```
 
 ---
