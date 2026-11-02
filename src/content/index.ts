@@ -4,30 +4,40 @@ import { createMessage, type ExtensionResponse } from "../shared/messages";
 
 const toast = new NudgeToast();
 
-// Query background whether current page is an active mindful session
-if (typeof chrome !== "undefined" && chrome.runtime?.sendMessage) {
-  const queryMsg = createMessage("GET_CURRENT_STATE", undefined);
+function initializeMindfulMonitoring(retries = 3): void {
+  if (typeof chrome === "undefined" || !chrome.runtime?.sendMessage) {
+    return;
+  }
+
+  const queryMsg = createMessage("GET_CURRENT_STATE", {
+    url: window.location.href
+  });
 
   chrome.runtime.sendMessage(queryMsg, (response: ExtensionResponse) => {
-    if (chrome.runtime.lastError || !response || !response.success) {
+    if (chrome.runtime.lastError) {
       return;
     }
 
-    const { isMindfulSite, activeSession } = response.data || {};
+    const { isMindfulSite, activeSession } = response?.data || {};
+
     if (!isMindfulSite || !activeSession) {
+      if (retries > 0) {
+        // Retry in case background session registration was slightly asynchronous
+        setTimeout(() => initializeMindfulMonitoring(retries - 1), 600);
+      }
       return;
     }
 
-    const intentionLabel = activeSession.intention?.label || "Conscious Session";
+    const intentionLabel = activeSession.intention?.label || "Quick Check";
     const thresholdMinutes = activeSession.intention?.thresholdMinutes || undefined;
 
     // Start heartbeat monitor
     const monitor = new HeartbeatMonitor({
       intervalMs: 5000,
-      onNudgeRequested: (message) => {
+      onNudgeRequested: (message, nudgeThreshold) => {
         toast.show({
           intentionLabel,
-          thresholdMinutes,
+          thresholdMinutes: nudgeThreshold || thresholdMinutes,
           message,
           onKeepGoing: () => {
             chrome.runtime.sendMessage(
@@ -46,3 +56,5 @@ if (typeof chrome !== "undefined" && chrome.runtime?.sendMessage) {
     monitor.start();
   });
 }
+
+initializeMindfulMonitoring();

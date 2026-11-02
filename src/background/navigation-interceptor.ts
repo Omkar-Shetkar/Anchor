@@ -55,8 +55,8 @@ export class NavigationInterceptor {
     this.pendingRedirects.add(tabId);
 
     const interstitialUrl = typeof chrome !== "undefined" && chrome.runtime?.getURL
-      ? chrome.runtime.getURL(`interstitial/interstitial.html?target=${encodeURIComponent(targetUrl)}`)
-      : `interstitial/interstitial.html?target=${encodeURIComponent(targetUrl)}`;
+      ? chrome.runtime.getURL(`interstitial/interstitial.html?target=${encodeURIComponent(targetUrl)}&tabId=${tabId}`)
+      : `interstitial/interstitial.html?target=${encodeURIComponent(targetUrl)}&tabId=${tabId}`;
 
     if (typeof chrome !== "undefined" && chrome.tabs?.update) {
       chrome.tabs.update(tabId, { url: interstitialUrl }, () => {

@@ -293,6 +293,17 @@ export class StorageService {
     await this.backend.set({ [ACTIVE_SESSIONS_KEY]: sessions });
   }
 
+  async reassignActiveSession(
+    oldTabKey: string,
+    newTabId: number,
+    session: BrowsingSession
+  ): Promise<void> {
+    const sessions = await this.getActiveSessions();
+    delete sessions[oldTabKey];
+    sessions[String(newTabId)] = session;
+    await this.backend.set({ [ACTIVE_SESSIONS_KEY]: sessions });
+  }
+
   async updateSessionDwellTime(tabId: number, additionalSeconds: number): Promise<BrowsingSession | null> {
     const sessions = await this.getActiveSessions();
     const session = sessions[String(tabId)];

@@ -8,7 +8,7 @@ export interface HeartbeatOptions {
 export class HeartbeatMonitor {
   private intervalMs: number;
   private timer: any = null;
-  private hasRecentActivity: boolean = false;
+  private lastActivityTimestamp: number = Date.now();
   private onNudgeRequested: (message?: string, thresholdMinutes?: number) => void;
   private isDestroyed: boolean = false;
 
@@ -17,21 +17,39 @@ export class HeartbeatMonitor {
     this.onNudgeRequested = options.onNudgeRequested;
   }
 
+  private isMediaPlaying(): boolean {
+    try {
+      const mediaElements = document.querySelectorAll<HTMLMediaElement>("video, audio");
+      for (let i = 0; i < mediaElements.length; i++) {
+        const el = mediaElements[i];
+        if (!el.paused && !el.ended && el.readyState > 2) {
+          return true;
+        }
+      }
+    } catch {
+      // Ignore DOM access exceptions
+    }
+    return false;
+  }
+
   start(): void {
     if (typeof window === "undefined" || typeof document === "undefined") return;
 
-    // Activity listeners (throttled)
+    // Listen to various user interaction events to record activity
     const onActivity = () => {
-      this.hasRecentActivity = true;
+      this.lastActivityTimestamp = Date.now();
     };
 
     window.addEventListener("scroll", onActivity, { passive: true });
     window.addEventListener("mousemove", onActivity, { passive: true });
     window.addEventListener("keydown", onActivity, { passive: true });
     window.addEventListener("click", onActivity, { passive: true });
+    window.addEventListener("wheel", onActivity, { passive: true });
+    window.addEventListener("pointerdown", onActivity, { passive: true });
+    window.addEventListener("touchstart", onActivity, { passive: true });
 
-    // Initial activity assumption on page load
-    this.hasRecentActivity = true;
+    // Mark current time as active on start
+    this.lastActivityTimestamp = Date.now();
 
     this.timer = setInterval(() => {
       this.pulse();
@@ -39,16 +57,25 @@ export class HeartbeatMonitor {
   }
 
   private pulse(): void {
-    if (this.isDestroyed || document.hidden || !this.hasRecentActivity) {
+    if (this.isDestroyed || document.hidden) {
       return;
     }
 
-    // Reset activity flag until next user interaction
-    this.hasRecentActivity = false;
+    const now = Date.now();
+    const timeSinceLastActivity = now - this.lastActivityTimestamp;
+    const mediaPlaying = this.isMediaPlaying();
+
+    // User is considered engaged if media is actively playing or user interacted within the last 60 seconds
+    const isEngaged = mediaPlaying || timeSinceLastActivity <= 60000;
+
+    if (!isEngaged) {
+      return;
+    }
 
     const seconds = Math.round(this.intervalMs / 1000);
     const msg = createMessage("HEARTBEAT_ACTIVE_PULSE", {
-      activeSecondsElapsed: seconds
+      activeSecondsElapsed: seconds,
+      url: window.location.href
     });
 
     if (typeof chrome !== "undefined" && chrome.runtime?.sendMessage) {

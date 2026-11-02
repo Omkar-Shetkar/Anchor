@@ -14,21 +14,43 @@ export class SessionTracker {
   initializeListeners(): void {
     if (typeof chrome === "undefined") return;
 
-    // 1. Track tab activation
+    // 1. Initial active tab detection on startup
+    if (chrome.tabs?.query) {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        if (tabs && tabs[0]?.id) {
+          this.setActiveTab(tabs[0].id);
+        }
+      });
+    }
+
+    // 2. Track tab activation
     if (chrome.tabs?.onActivated) {
       chrome.tabs.onActivated.addListener((activeInfo) => {
         this.setActiveTab(activeInfo.tabId);
       });
     }
 
-    // 2. Track window focus
+    // 3. Track tab update navigation
+    if (chrome.tabs?.onUpdated) {
+      chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
+        if (changeInfo.status === "complete") {
+          chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            if (tabs && tabs[0]?.id === tabId) {
+              this.setActiveTab(tabId);
+            }
+          });
+        }
+      });
+    }
+
+    // 4. Track window focus
     if (chrome.windows?.onFocusChanged) {
       chrome.windows.onFocusChanged.addListener((windowId) => {
         this.setWindowFocused(windowId !== chrome.windows.WINDOW_ID_NONE);
       });
     }
 
-    // 3. Track system idle / lock
+    // 5. Track system idle / lock
     if (chrome.idle?.onStateChanged) {
       chrome.idle.setDetectionInterval(60); // 60 seconds detection
       chrome.idle.onStateChanged.addListener((newState) => {
@@ -51,15 +73,18 @@ export class SessionTracker {
   }
 
   isTabInForegroundFocus(tabId: number): boolean {
-    return this.activeTabId === tabId && this.isWindowFocused && !this.isSystemIdle;
+    return (this.activeTabId === null || this.activeTabId === tabId) && this.isWindowFocused && !this.isSystemIdle;
   }
 
   async recordActiveDwell(tabId: number, secondsElapsed: number): Promise<number | null> {
-    if (!this.isTabInForegroundFocus(tabId)) {
+    if (this.isSystemIdle) {
       return null;
     }
 
+    // Content script already verifies document is visible (!document.hidden).
+    this.activeTabId = tabId;
     this.lastActiveTimestamp.set(tabId, Date.now());
+
     const updated = await this.storage.updateSessionDwellTime(tabId, secondsElapsed);
     return updated ? updated.activeDwellSeconds : null;
   }

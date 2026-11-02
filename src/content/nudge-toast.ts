@@ -25,11 +25,14 @@ export class NudgeToast {
       <style>
         :host {
           all: initial;
-          position: fixed;
-          bottom: 24px;
-          right: 24px;
-          z-index: 2147483647;
-          pointer-events: none;
+          display: block !important;
+          position: fixed !important;
+          bottom: 24px !important;
+          right: 24px !important;
+          z-index: 2147483647 !important;
+          pointer-events: none !important;
+          visibility: visible !important;
+          opacity: 1 !important;
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
 
@@ -168,7 +171,10 @@ export class NudgeToast {
       options.onCloseTab();
     });
 
-    document.documentElement.appendChild(this.host);
+    const container = document.body || document.documentElement;
+    if (container) {
+      container.appendChild(this.host);
+    }
   }
 
   remove(): void {

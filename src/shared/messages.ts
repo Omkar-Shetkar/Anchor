@@ -29,15 +29,22 @@ export interface ExtensionResponse<TData = any> {
 export interface InterstitialIntentionPayload {
   targetUrl: string;
   intention: Intention;
+  tabId?: number;
 }
 
 export interface InterstitialBouncePayload {
   targetUrl: string;
+  tabId?: number;
 }
 
 export interface HeartbeatPulsePayload {
-  sessionId: string;
+  sessionId?: string;
   activeSecondsElapsed: number;
+  url?: string;
+}
+
+export interface CurrentStatePayload {
+  url?: string;
 }
 
 export interface HeartbeatPulseResponse {
@@ -47,8 +54,9 @@ export interface HeartbeatPulseResponse {
 }
 
 export interface NudgeActionPayload {
-  sessionId: string;
+  sessionId?: string;
   action: "keep_going" | "close_tab";
+  tabId?: number;
 }
 
 export interface CurrentStateResponse {

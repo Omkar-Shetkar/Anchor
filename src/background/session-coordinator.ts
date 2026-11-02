@@ -1,6 +1,6 @@
 import { defaultStorageService, StorageService } from "../shared/storage";
 import { defaultSessionTracker, SessionTracker } from "./session-tracker";
-import { normalizeDomain, extractDomainFromUrl } from "../shared/domain-matcher";
+import { normalizeDomain, extractDomainFromUrl, matchesDomainPattern } from "../shared/domain-matcher";
 import {
   type ExtensionMessage,
   type ExtensionResponse,
@@ -52,7 +52,9 @@ export class SessionCoordinator {
     };
 
     await this.storage.startSession(tabId, session);
-    this.tracker.setActiveTab(tabId);
+    if (tabId > 0) {
+      this.tracker.setActiveTab(tabId);
+    }
 
     return createSuccessResponse({
       sessionId,
@@ -86,21 +88,48 @@ export class SessionCoordinator {
 
     await this.storage.recordSession(bouncedSession);
 
-    if (typeof chrome !== "undefined" && chrome.tabs?.remove && tabId) {
+    if (typeof chrome !== "undefined" && chrome.tabs?.remove && tabId > 0) {
       chrome.tabs.remove(tabId);
     }
 
     return createSuccessResponse();
   }
 
-  async handleHeartbeat(tabId: number, secondsElapsed: number): Promise<ExtensionResponse> {
+  async handleHeartbeat(
+    tabId: number,
+    secondsElapsed: number,
+    url?: string
+  ): Promise<ExtensionResponse> {
+    let session = await this.storage.getActiveSession(tabId);
+
+    // Fallback reassociation if tabId changed or was not set
+    if (!session && url) {
+      const allActive = await this.storage.getActiveSessions();
+      for (const [storedTabId, s] of Object.entries(allActive)) {
+        if (matchesDomainPattern(url, s.domain)) {
+          session = s;
+          if (tabId > 0 && storedTabId !== String(tabId)) {
+            await this.storage.reassignActiveSession(storedTabId, tabId, s);
+            this.tracker.setActiveTab(tabId);
+          }
+          break;
+        }
+      }
+    }
+
+    if (!session) {
+      return createSuccessResponse({ shouldNudge: false });
+    }
+
     const dwell = await this.tracker.recordActiveDwell(tabId, secondsElapsed);
     if (dwell === null) {
       return createSuccessResponse({ shouldNudge: false });
     }
 
-    const session = await this.storage.getActiveSession(tabId);
-    if (!session || !session.intention.thresholdMinutes) {
+    // Refresh session to get updated dwell time
+    session = (await this.storage.getActiveSession(tabId)) || session;
+
+    if (!session.intention.thresholdMinutes) {
       return createSuccessResponse({ shouldNudge: false });
     }
 
@@ -131,7 +160,7 @@ export class SessionCoordinator {
     }
 
     if (action === "close_tab") {
-      if (typeof chrome !== "undefined" && chrome.tabs?.remove && tabId) {
+      if (typeof chrome !== "undefined" && chrome.tabs?.remove && tabId > 0) {
         chrome.tabs.remove(tabId);
       }
     }
@@ -139,8 +168,24 @@ export class SessionCoordinator {
     return createSuccessResponse();
   }
 
-  async handleGetCurrentState(tabId: number): Promise<ExtensionResponse> {
-    const activeSession = await this.storage.getActiveSession(tabId);
+  async handleGetCurrentState(tabId: number, url?: string): Promise<ExtensionResponse> {
+    let activeSession = await this.storage.getActiveSession(tabId);
+
+    // Fallback search across active sessions if tabId did not match (e.g. extension page tabId vs content script tabId in Firefox)
+    if (!activeSession && url) {
+      const allActive = await this.storage.getActiveSessions();
+      for (const [storedTabId, session] of Object.entries(allActive)) {
+        if (matchesDomainPattern(url, session.domain)) {
+          activeSession = session;
+          if (tabId > 0 && storedTabId !== String(tabId)) {
+            await this.storage.reassignActiveSession(storedTabId, tabId, session);
+            this.tracker.setActiveTab(tabId);
+          }
+          break;
+        }
+      }
+    }
+
     const settings = await this.storage.getSettings();
 
     return createSuccessResponse({
@@ -158,7 +203,8 @@ export class SessionCoordinator {
       return createErrorResponse("Invalid message payload");
     }
 
-    const tabId = senderTabId || 0;
+    const payloadTabId = message.payload?.tabId;
+    const tabId = payloadTabId || senderTabId || 0;
 
     switch (message.type) {
       case "INTERSTITIAL_INTENTION_SUBMITTED": {
@@ -176,7 +222,8 @@ export class SessionCoordinator {
 
       case "HEARTBEAT_ACTIVE_PULSE": {
         const seconds = message.payload?.activeSecondsElapsed || 5;
-        return this.handleHeartbeat(tabId, seconds);
+        const url = message.payload?.url;
+        return this.handleHeartbeat(tabId, seconds, url);
       }
 
       case "NUDGE_ACTION_SELECTED": {
@@ -185,7 +232,8 @@ export class SessionCoordinator {
       }
 
       case "GET_CURRENT_STATE": {
-        return this.handleGetCurrentState(tabId);
+        const url = message.payload?.url;
+        return this.handleGetCurrentState(tabId, url);
       }
 
       case "UPDATE_SETTINGS": {
