@@ -43,6 +43,7 @@ Anchor is engineered as a unified, cross-browser WebExtension built with TypeScr
 | **Permissions API** | Standard `chrome.*` & `browser.*` via `webextension-polyfill` | Standard `browser.*` & `webextension-polyfill` |
 | **Data Storage** | `chrome.storage.local` (100% offline, client-side only) | `chrome.storage.local` (100% offline, client-side only) |
 | **Remote Network Calls** | **0** (Zero telemetry, zero remote hosted scripts) | **0** (Zero telemetry, zero remote hosted scripts) |
+| **Data Collection Consent** | Declared in CWS Developer Dashboard Privacy Tab | Declared in manifest: `"data_collection_permissions": { "required": ["none"] }` |
 
 ```mermaid
 graph TD
@@ -249,7 +250,12 @@ When submitting an add-on, Mozilla provides two distribution channels:
 4. The AMO validation linter will scan the bundle. Verify that:
    - `manifest_version: 3` is recognized.
    - `browser_specific_settings.gecko.id: "anchor@mindful.browsing"` is verified.
+   - `browser_specific_settings.gecko.data_collection_permissions` is present (`"required": ["none"]`).
    - No fatal validation errors are reported.
+
+> [!NOTE]
+> **Firefox AMO Data Collection Consent Requirement**:  
+> Mozilla's Add-on Developer Hub requires all extensions to explicitly declare their data collection practices under `browser_specific_settings.gecko.data_collection_permissions`. Because Anchor is 100% client-side with zero telemetry, it specifies `"required": ["none"]`. Missing this property triggers the AMO linter error: *"The 'data_collection_permissions' property is missing."*
 
 ### 5.4 Source Code Submission (Mandatory for AMO)
 
@@ -339,6 +345,7 @@ Review teams at Google and Mozilla enforce strict policies. Here is how Anchor s
 | **Broad Host Permissions** | Must justify `<all_urls>` permission. | Required because the user specifies custom domains (e.g., forums, blogs, shopping sites) to intercept. |
 | **User Privacy & Telemetry** | Clear disclosures of collected data. | Anchor collects **zero telemetry**. 100% of data is stored in `chrome.storage.local`. Zero network traffic. |
 | **Manifest Structure** | `manifest.json` at root of ZIP. | Automated packaging script guarantees root-level manifest packaging. |
+| **Data Collection Consent (AMO)** | Must declare data collection practices in manifest. | Configured with `browser_specific_settings.gecko.data_collection_permissions.required: ["none"]`. |
 | **Reproducible Builds (Mozilla)** | Source code must accompany bundled code. | Automated `anchor-source-vX.X.X.zip` and verified build instructions are provided. |
 
 ---

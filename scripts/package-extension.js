@@ -37,7 +37,11 @@ if (!fs.existsSync(firefoxManifestPath)) {
   process.exit(1);
 }
 const firefoxManifest = JSON.parse(fs.readFileSync(firefoxManifestPath, "utf-8"));
-console.log(`✓ Firefox Manifest V3 verified (v${firefoxManifest.version})`);
+if (!firefoxManifest.browser_specific_settings?.gecko?.data_collection_permissions) {
+  console.error("✗ Firefox manifest missing browser_specific_settings.gecko.data_collection_permissions!");
+  process.exit(1);
+}
+console.log(`✓ Firefox Manifest V3 verified (v${firefoxManifest.version}, data_collection_permissions: none)`);
 
 // 4. Create release directory
 const releaseDir = path.resolve(rootDir, "release");
