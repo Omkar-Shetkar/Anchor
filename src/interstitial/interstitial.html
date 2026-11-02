@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anchor • Mindful Pause</title>
+  <link rel="stylesheet" href="../assets/styles/tokens.css">
+  <link rel="stylesheet" href="interstitial.css">
+</head>
+<body>
+  <div class="interstitial-container">
+    <main class="mindful-card" role="dialog" aria-labelledby="card-title">
+      
+      <!-- Top Brand & Domain Target -->
+      <header class="card-header">
+        <div class="brand-badge">
+          <svg class="anchor-icon" viewBox="0 0 128 128" width="20" height="20" aria-hidden="true">
+            <circle cx="64" cy="34" r="9" fill="none" stroke="currentColor" stroke-width="6" />
+            <circle cx="64" cy="34" r="3" fill="currentColor" />
+            <line x1="64" y1="43" x2="64" y2="92" stroke="currentColor" stroke-width="6" stroke-linecap="round" />
+            <line x1="46" y1="52" x2="82" y2="52" stroke="currentColor" stroke-width="6" stroke-linecap="round" />
+            <path d="M 36 78 C 36 98, 92 98, 92 78" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" />
+          </svg>
+          <span>Anchor</span>
+        </div>
+        <p class="destination-text">Approaching <span id="target-domain-name" class="domain-highlight">mindful site</span></p>
+      </header>
+
+      <!-- Breathing Animation Section -->
+      <section class="breathing-stage" aria-live="polite">
+        <div class="breathing-ring-outer">
+          <div class="breathing-ring-pulse"></div>
+          <div class="breathing-circle-core" id="breathing-core">
+            <span class="breathing-cue" id="breathing-cue">Breathe in...</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Intention Form Section -->
+      <section class="intention-section">
+        <h1 id="card-title" class="prompt-title">What brings you here right now?</h1>
+        <p class="prompt-subtitle">A moment of clarity before you enter.</p>
+
+        <!-- Quick Pills -->
+        <div class="pills-container" role="radiogroup" aria-label="Quick intentions">
+          <button type="button" class="intention-pill" data-type="work_research" data-label="Work / Research" data-threshold="null">
+            <span class="pill-icon">💼</span>
+            <span>Work / Research</span>
+          </button>
+          <button type="button" class="intention-pill" data-type="quick_check" data-label="Quick Check" data-threshold="7">
+            <span class="pill-icon">⏱️</span>
+            <span>Quick Check</span>
+          </button>
+          <button type="button" class="intention-pill" data-type="boredom_escapism" data-label="Boredom / Escapism" data-threshold="15">
+            <span class="pill-icon">🌊</span>
+            <span>Boredom / Escapism</span>
+          </button>
+        </div>
+
+        <!-- Custom text box -->
+        <div class="custom-input-wrapper">
+          <input 
+            type="text" 
+            id="custom-intention-input" 
+            class="custom-intention-input" 
+            placeholder="Or type a specific intention (e.g., check ink cartridge reviews)..." 
+            maxlength="140"
+            autocomplete="off"
+          />
+        </div>
+      </section>
+
+      <!-- Action Buttons -->
+      <footer class="actions-footer">
+        <button type="button" id="btn-close-tab" class="btn btn-secondary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+          <span>Never mind, close tab</span>
+        </button>
+        <button type="button" id="btn-proceed" class="btn btn-primary" disabled>
+          <span>Proceed with Intention</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </footer>
+
+    </main>
+  </div>
+
+  <script type="module" src="interstitial.ts"></script>
+</body>
+</html>

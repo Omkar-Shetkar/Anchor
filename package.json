@@ -1,0 +1,29 @@
+{
+  "name": "anchor-browser-extension",
+  "version": "1.0.0",
+  "description": "Anchor: Mindful Browsing & Reflective Time Audit Browser Extension",
+  "type": "module",
+  "scripts": {
+    "dev": "vite build --watch",
+    "dev:chrome": "vite build --watch --mode chrome",
+    "dev:firefox": "vite build --watch --mode firefox",
+    "build": "vite build && node scripts/package-extension.js",
+    "build:chrome": "vite build --mode chrome",
+    "build:firefox": "vite build --mode firefox",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "webextension-polyfill": "^0.12.0"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.268",
+    "@types/node": "^20.12.7",
+    "@types/webextension-polyfill": "^0.10.7",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.10",
+    "vitest": "^1.5.2"
+  }
+}
